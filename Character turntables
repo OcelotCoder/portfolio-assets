@@ -5,13 +5,14 @@
     display: flex;
     justify-content: space-around;
     align-items: flex-start;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 20px;
   }
   .video-column {
-    flex: 1 1 45%;
-    max-width: 45%;
+    flex: 1 1 30%;
+    max-width: 30%;
     min-width: 300px;
+    display: in-line;
   }
   .video-column video {
     width: 100%;
@@ -59,38 +60,33 @@
     <video id="finalPlayer" autoplay muted playsinline></video>
     <div class="video-label">Sun-skink</div>
   </div>
+  <div class="video-column">
+    <video id="final2Player" autoplay muted playsinline></video>
+    <div class="video-label">Horned lizard</div>
+  </div>
 </div>
 
 <script>
   const animaticPlayer = document.getElementById('animaticPlayer');
   const finalPlayer = document.getElementById('finalPlayer');
+  const final2Player = document.getElementById('final2Player');
   const resetButton = document.getElementById('resetButton');
   
   animaticPlayer.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/GeckoTurntable.mp4";
   finalPlayer.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/SkinkTurntable.mp4";
-
-  let activePlayer = null;
-  let otherPlayer = null;
-  
-  // regular time updates i.e. only update if not scrubbing
-  animaticPlayer.addEventListener('timeupdate', () => {
-      updateProgressBar(animaticPlayer, animaticProgressBar, animaticProgressHandle);
-      updateProgressBar(finalPlayer, finalProgressBar, finalProgressHandle); // keep other bar in sync
-  });
-
-  finalPlayer.addEventListener('timeupdate', () => {
-      updateProgressBar(finalPlayer, finalProgressBar, finalProgressHandle);
-      updateProgressBar(animaticPlayer, animaticProgressBar, animaticProgressHandle);
-  });
+  final2Player.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/LizardTurntableNEW.mp4";
   
   function resetVideos() {
     animaticPlayer.currentTime = 0;
     finalPlayer.currentTime = 0;
+    final2Player.currentTime = 0;
     animaticPlayer.play();
     finalPlayer.play();
+    final2Player.play();
   }
   
   animaticPlayer.addEventListener('ended', resetVideos);
   finalPlayer.addEventListener('ended', resetVideos);
+  final2Player.addEventListener('ended', resetVideos);
   resetButton.addEventListener('click', resetVideos);
 </script>
