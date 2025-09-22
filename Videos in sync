@@ -13,9 +13,42 @@
     max-width: 45%;
     min-width: 300px;
   }
+
+  .video-player-wrapper {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
   .video-column video {
     width: 100%;
     height: auto;
+    display: block;
+  }
+  .play-pause-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    z-index: 20;
+  }
+  .play-pause-button {
+    font-family: sans-serif;
+    font-size: 4em;
+    color: white;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+  }
+  .hidden {
+    opacity: 0;
+    pointer-events: none;
   }
   .progress-bar-container {
     position: relative;
@@ -76,7 +109,12 @@
 
 <div class="video-container">
   <div class="video-column">
-    <video id="animaticPlayer" autoplay muted playsinline></video>
+    <div class="video-player-wrapper">
+      <video id="animaticPlayer" muted playsinline></video>
+      <div class="play-pause-overlay" id="animaticOverlay">
+        <span class="play-pause-button" id="animaticPlayButton">▶</span>
+      </div>
+    </div>
     <div class="progress-bar-container" id="animaticProgressBarContainer">
       <div class="progress-bar-fill" id="animaticProgressBar"></div>
       <div class="progress-handle" id="animaticProgressHandle"></div>
@@ -84,7 +122,12 @@
     <div class="video-label">Animatic (sketched prototype)</div>
   </div>
   <div class="video-column">
-    <video id="finalPlayer" autoplay muted playsinline></video>
+    <div class="video-player-wrapper">
+      <video id="finalPlayer" muted playsinline></video>
+      <div class="play-pause-overlay" id="finalOverlay">
+        <span class="play-pause-button" id="finalPlayButton">▶</span>
+      </div>
+    </div>
     <div class="progress-bar-container" id="finalProgressBarContainer">
       <div class="progress-bar-fill" id="finalProgressBar"></div>
       <div class="progress-handle" id="finalProgressHandle"></div>
@@ -107,7 +150,15 @@
   const animaticProgressHandle = document.getElementById('animaticProgressHandle');
   const finalProgressHandle = document.getElementById('finalProgressHandle');
   const resetButton = document.getElementById('resetButton');
+  const animaticOverlay = document.getElementById('animaticOverlay');
+  const finalOverlay = document.getElementById('finalOverlay');
+  const animaticPlayButton = document.getElementById('animaticPlayButton');
+  const finalPlayButton = document.getElementById('finalPlayButton');
   
+  const animaticPlayerWrapper = animaticPlayer.closest('.video-player-wrapper');
+  const finalPlayerWrapper = finalPlayer.closest('.video-player-wrapper');
+
+
   animaticPlayer.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/animatic25mb.mp4";
   finalPlayer.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/animation25mb.mp4";
 
@@ -118,9 +169,57 @@
   let activeProgressBarFill = null;
   let activeProgressHandle = null;
 
+  let isPlaying = false;
+  
+  function togglePlayPause() {
+    if (isPlaying) {
+      animaticPlayer.pause();
+      finalPlayer.pause();
+      animaticPlayButton.textContent = '▶';
+      finalPlayButton.textContent = '▶';
+      animaticOverlay.classList.remove('hidden');
+      finalOverlay.classList.remove('hidden');
+    } else {
+      animaticPlayer.play();
+      finalPlayer.play();
+      animaticPlayButton.textContent = '❚❚';
+      finalPlayButton.textContent = '❚❚';
+      animaticOverlay.classList.add('hidden');
+      finalOverlay.classList.add('hidden');
+    }
+    isPlaying = !isPlaying;
+  }
+  
+  animaticPlayerWrapper.addEventListener('click', togglePlayPause);
+  finalPlayerWrapper.addEventListener('click', togglePlayPause);
+  
+  animaticPlayerWrapper.addEventListener('mouseover', () => {
+    if (isPlaying) {
+      animaticOverlay.classList.remove('hidden');
+      animaticPlayButton.textContent = '❚❚';
+    }
+  });
+  animaticPlayerWrapper.addEventListener('mouseleave', () => {
+    if (isPlaying) {
+      animaticOverlay.classList.add('hidden');
+    }
+  });
+
+  finalPlayerWrapper.addEventListener('mouseover', () => {
+    if (isPlaying) {
+      finalOverlay.classList.remove('hidden');
+      finalPlayButton.textContent = '❚❚';
+    }
+  });
+  finalPlayerWrapper.addEventListener('mouseleave', () => {
+    if (isPlaying) {
+      finalOverlay.classList.add('hidden');
+    }
+  });
+  
   function updateProgressBar(player, fill, handle) {
     const progress = player.currentTime / player.duration;
-    const progressBarWidth = player.parentNode.querySelector('.progress-bar-container').offsetWidth;
+    const progressBarWidth = player.parentNode.parentNode.querySelector('.progress-bar-container').offsetWidth;
     fill.style.width = (progress * 100) + '%';
     handle.style.left = (progress * progressBarWidth) + 'px';
   }
@@ -130,28 +229,27 @@
 
     const rect = activeProgressBarContainer.getBoundingClientRect();
     let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : null);
-    if (clientX === null) return; // exit if no valid clientX
+    if (clientX === null) return;
 
     let x = clientX - rect.left;
-    x = Math.max(0, Math.min(x, rect.width)); // clamp x within bounds
+    x = Math.max(0, Math.min(x, rect.width));
 
     const newTime = (x / rect.width) * activePlayer.duration;
     
     activePlayer.currentTime = newTime;
     otherPlayer.currentTime = newTime;
     
-    // manually update visual position during scrubbing
     activeProgressBarFill.style.width = (x / rect.width * 100) + '%';
     activeProgressHandle.style.left = x + 'px';
     
-    const otherProgressBarFill = otherPlayer.parentNode.querySelector('.progress-bar-fill');
-    const otherProgressHandle = otherPlayer.parentNode.querySelector('.progress-handle');
+    const otherProgressBarFill = otherPlayer.closest('.video-column').querySelector('.progress-bar-fill');
+    const otherProgressHandle = otherPlayer.closest('.video-column').querySelector('.progress-handle');
     otherProgressBarFill.style.width = (x / rect.width * 100) + '%';
     otherProgressHandle.style.left = x + 'px';
   }
 
   function startScrubbing(e, player, partner, fill, handle, container) {
-    if (e.target !== handle && e.target !== fill && e.target !== container) return; // only start scrubbing if clicking on handle or bar
+    if (e.target !== handle && e.target !== fill && e.target !== container) return;
 
     isScrubbing = true;
     activePlayer = player;
@@ -163,8 +261,8 @@
     activePlayer.pause();
     otherPlayer.pause();
     
-    activeProgressHandle.style.cursor = 'grabbing'; // change cursor when dragging
-    scrub(e); // set initial position on mousedown
+    activeProgressHandle.style.cursor = 'grabbing';
+    scrub(e);
   }
 
   function endScrubbing() {
@@ -173,7 +271,7 @@
     if (activePlayer && otherPlayer) {
       activePlayer.play();
       otherPlayer.play();
-      activeProgressHandle.style.cursor = 'grab'; // reset cursor
+      activeProgressHandle.style.cursor = 'grab';
     }
     activePlayer = null;
     otherPlayer = null;
@@ -191,18 +289,21 @@
   document.addEventListener('mousemove', scrub);
   document.addEventListener('mouseup', endScrubbing);
   
-  // regular time updates i.e. only update if not scrubbing
   animaticPlayer.addEventListener('timeupdate', () => {
     if (!isScrubbing) {
       updateProgressBar(animaticPlayer, animaticProgressBar, animaticProgressHandle);
-      updateProgressBar(finalPlayer, finalProgressBar, finalProgressHandle); // keep other bar in sync
+      if (!isScrubbing) {
+        updateProgressBar(finalPlayer, finalProgressBar, finalProgressHandle); 
+      }
     }
   });
 
   finalPlayer.addEventListener('timeupdate', () => {
     if (!isScrubbing) {
       updateProgressBar(finalPlayer, finalProgressBar, finalProgressHandle);
-      updateProgressBar(animaticPlayer, animaticProgressBar, animaticProgressHandle);
+      if (!isScrubbing) {
+        updateProgressBar(animaticPlayer, animaticProgressBar, animaticProgressHandle);
+      }
     }
   });
   
