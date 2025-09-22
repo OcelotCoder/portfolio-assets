@@ -1,0 +1,96 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap');
+
+  .video-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .video-column {
+    flex: 1 1 45%;
+    max-width: 45%;
+    min-width: 300px;
+  }
+  .video-column video {
+    width: 100%;
+    height: auto;
+  }
+  .reset-button-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .reset-button {
+    font-family: 'Oswald', sans-serif;
+    background-color: #000;
+    color: white;
+    text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 0.7em;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  .reset-button:hover {
+    background-color: #7e49b7;
+  }
+  .video-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px;
+    color: black;
+    text-align: center;
+    margin-top: 10px;
+    text-transform: uppercase;
+  }
+</style>
+
+<div class="video-container">
+  <div class="video-column">
+    <video id="animaticPlayer" autoplay muted playsinline></video>
+    <div class="video-label">Leaf-tail gecko</div>
+  </div>
+  <div class="video-column">
+    <video id="finalPlayer" autoplay muted playsinline></video>
+    <div class="video-label">Sun-skink</div>
+  </div>
+</div>
+
+<script>
+  const animaticPlayer = document.getElementById('animaticPlayer');
+  const finalPlayer = document.getElementById('finalPlayer');
+  const resetButton = document.getElementById('resetButton');
+  
+  animaticPlayer.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/GeckoTurntable.mp4";
+  finalPlayer.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/SkinkTurntable.mp4";
+
+  let activePlayer = null;
+  let otherPlayer = null;
+  
+  // regular time updates i.e. only update if not scrubbing
+  animaticPlayer.addEventListener('timeupdate', () => {
+      updateProgressBar(animaticPlayer, animaticProgressBar, animaticProgressHandle);
+      updateProgressBar(finalPlayer, finalProgressBar, finalProgressHandle); // keep other bar in sync
+  });
+
+  finalPlayer.addEventListener('timeupdate', () => {
+      updateProgressBar(finalPlayer, finalProgressBar, finalProgressHandle);
+      updateProgressBar(animaticPlayer, animaticProgressBar, animaticProgressHandle);
+  });
+  
+  function resetVideos() {
+    animaticPlayer.currentTime = 0;
+    finalPlayer.currentTime = 0;
+    animaticPlayer.play();
+    finalPlayer.play();
+  }
+  
+  animaticPlayer.addEventListener('ended', resetVideos);
+  finalPlayer.addEventListener('ended', resetVideos);
+  resetButton.addEventListener('click', resetVideos);
+</script>
