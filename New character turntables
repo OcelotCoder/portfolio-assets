@@ -169,9 +169,9 @@
   const lizard = document.getElementById('lizard');
   const videos = [gecko, skink, lizard];
   
-  gecko.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/GeckoTurntable.mp4";
-  skink.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/SkinkTurntable.mp4";
-  lizard.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/LizardTurntableNEW.mp4";
+  gecko.src = "https://ik.imagekit.io/ocelot1/GeckoTurntable.mp4?updatedAt=1758531014018";
+  skink.src = "https://ik.imagekit.io/ocelot1/SkinkTurntable.mp4?updatedAt=1758531012939";
+  lizard.src = "https://ik.imagekit.io/ocelot1/LizardTurntableNEW.mp4?updatedAt=1758531012699";
 
   const columns = document.querySelectorAll('.turntable-column');
   const labels = document.querySelectorAll('.video-label');
