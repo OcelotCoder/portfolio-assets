@@ -1,0 +1,204 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap');
+
+  .slider-container-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 60px;
+  }
+  .slider-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    overflow: hidden;
+  }
+  .slider-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+  }
+  .slider-image.active {
+    opacity: 1;
+  }
+  .slider-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .caption {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1em;
+    text-transform: uppercase;
+    text-align: center;
+    z-index: 200;
+    text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000;
+  }
+  .progress-bar-container {
+    position: absolute;
+    bottom: 20px;
+    left: 10%;
+    width: 80%;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.5);
+    z-index: 200;
+  }
+  .progress-bar-handle {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #7e49b7;
+    cursor: grab;
+  }
+  .thumbnails-container {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 600px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 150;
+  }
+  .thumbnail {
+    width: 22%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease;
+  }
+  .thumbnail.active {
+    border-color: #7e49b7;
+  }
+  .thumbnail img {
+    width: 100%;
+    height: auto;
+  }
+</style>
+
+<div class="slider-container-wrapper">
+  <div class="slider-container" id="mySlider">
+    <div class="slider-image active" data-caption="Wireframe">
+      <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Axe1.png">
+    </div>
+    <div class="slider-image" data-caption="Solid Shading">
+      <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Axe2.png">
+    </div>
+    <div class="slider-image" data-caption="Material Preview">
+      <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Axe3.png">
+    </div>
+    <div class="slider-image" data-caption="Final Render">
+      <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Axe4.png">
+    </div>
+    <div class="caption"></div>
+    <div class="progress-bar-container">
+      <div class="progress-bar-handle"></div>
+    </div>
+  </div>
+  <div class="thumbnails-container">
+    <div class="thumbnail active" data-index="0">
+      <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Axe1.png">
+    </div>
+    <div class="thumbnail" data-index="1">
+      <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Axe2.png">
+    </div>
+    <div class="thumbnail" data-index="2">
+      <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Axe3.png">
+    </div>
+    <div class="thumbnail" data-index="3">
+      <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Axe4.png">
+    </div>
+  </div>
+</div>
+<script>
+  const sliderContainer = document.getElementById('mySlider');
+  const sliderImages = sliderContainer.querySelectorAll('.slider-image');
+  const handle = sliderContainer.querySelector('.progress-bar-handle');
+  const progressBar = sliderContainer.querySelector('.progress-bar-container');
+  const captionEl = sliderContainer.querySelector('.caption');
+  const thumbnails = document.querySelector('.thumbnails-container').querySelectorAll('.thumbnail');
+
+  let isDragging = false;
+  let currentIndex = 0;
+
+  function updateDisplay(x) {
+    const barWidth = progressBar.offsetWidth;
+    const segmentWidth = barWidth / (sliderImages.length - 1);
+    let newIndex = Math.min(Math.floor(x / segmentWidth), sliderImages.length - 1);
+
+    if (newIndex !== currentIndex) {
+      sliderImages[currentIndex].classList.remove('active');
+      thumbnails[currentIndex].classList.remove('active');
+      
+      currentIndex = newIndex;
+      
+      sliderImages[currentIndex].classList.add('active');
+      thumbnails[currentIndex].classList.add('active');
+      
+      captionEl.textContent = sliderImages[currentIndex].dataset.caption;
+    }
+  }
+
+  function startDrag(e) {
+    e.preventDefault();
+    isDragging = true;
+    handle.style.cursor = 'grabbing';
+  }
+
+  function drag(e) {
+    if (!isDragging) return;
+    
+    let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : null);
+    if (clientX === null) return;
+    
+    const containerRect = progressBar.getBoundingClientRect();
+    let relativeX = clientX - containerRect.left;
+    
+    relativeX = Math.max(0, Math.min(relativeX, containerRect.width));
+
+    handle.style.left = relativeX + 'px';
+    updateDisplay(relativeX);
+  }
+
+  function endDrag() {
+    isDragging = false;
+    handle.style.cursor = 'grab';
+  }
+
+  captionEl.textContent = sliderImages[0].dataset.caption;
+
+  thumbnails.forEach(thumb => {
+    thumb.addEventListener('click', (e) => {
+      const index = parseInt(e.currentTarget.dataset.index);
+      const barWidth = progressBar.offsetWidth;
+      const segmentWidth = barWidth / (sliderImages.length - 1);
+      
+      const newX = index * segmentWidth;
+      
+      handle.style.left = newX + 'px';
+      updateDisplay(newX);
+    });
+  });
+
+  handle.addEventListener('mousedown', startDrag);
+  handle.addEventListener('touchstart', startDrag);
+  document.addEventListener('mousemove', drag);
+  document.addEventListener('touchmove', drag);
+  document.addEventListener('mouseup', endDrag);
+  document.addEventListener('touchend', endDrag);
+</script>
