@@ -1,0 +1,221 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap');
+
+  .video-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .video-column {
+    flex: 1 1 45%;
+    max-width: 45%;
+    min-width: 300px;
+  }
+  .video-column video {
+    width: 100%;
+    height: auto;
+  }
+  .progress-bar-container {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.5);
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    width: 0;
+    background-color: #7e49b7;
+  }
+  .progress-handle {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    background-color: #7e49b7;
+    border-radius: 50%;
+    cursor: grab;
+    z-index: 10;
+  }
+  .reset-button-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .reset-button {
+    font-family: 'Oswald', sans-serif;
+    background-color: #000;
+    color: white;
+    text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 0.7em;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  .reset-button:hover {
+    background-color: #7e49b7;
+  }
+  .video-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px;
+    color: black;
+    text-align: center;
+    margin-top: 10px;
+    text-transform: uppercase;
+  }
+</style>
+
+<div class="video-container">
+  <div class="video-column">
+    <video id="animaticPlayer" autoplay muted playsinline></video>
+    <div class="progress-bar-container" id="animaticProgressBarContainer">
+      <div class="progress-bar-fill" id="animaticProgressBar"></div>
+      <div class="progress-handle" id="animaticProgressHandle"></div>
+    </div>
+    <div class="video-label">Animatic (sketched prototype)</div>
+  </div>
+  <div class="video-column">
+    <video id="finalPlayer" autoplay muted playsinline></video>
+    <div class="progress-bar-container" id="finalProgressBarContainer">
+      <div class="progress-bar-fill" id="finalProgressBar"></div>
+      <div class="progress-handle" id="finalProgressHandle"></div>
+    </div>
+    <div class="video-label">Final animation (ZBrush, Substance Painter, Blender)</div>
+  </div>
+</div>
+
+<div class="reset-button-container">
+  <button class="reset-button" id="resetButton">RESET VIDEOS</button>
+</div>
+
+<script>
+  const animaticPlayer = document.getElementById('animaticPlayer');
+  const finalPlayer = document.getElementById('finalPlayer');
+  const animaticProgressBar = document.getElementById('animaticProgressBar');
+  const finalProgressBar = document.getElementById('finalProgressBar');
+  const animaticProgressBarContainer = document.getElementById('animaticProgressBarContainer');
+  const finalProgressBarContainer = document.getElementById('finalProgressBarContainer');
+  const animaticProgressHandle = document.getElementById('animaticProgressHandle');
+  const finalProgressHandle = document.getElementById('finalProgressHandle');
+  const resetButton = document.getElementById('resetButton');
+  
+  animaticPlayer.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/animatic25mb.mp4";
+  finalPlayer.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/animation25mb.mp4";
+
+  let isScrubbing = false;
+  let activeProgressBarContainer = null;
+  let activePlayer = null;
+  let otherPlayer = null;
+  let activeProgressBarFill = null;
+  let activeProgressHandle = null;
+
+  function updateProgressBar(player, fill, handle) {
+    const progress = player.currentTime / player.duration;
+    const progressBarWidth = player.parentNode.querySelector('.progress-bar-container').offsetWidth;
+    fill.style.width = (progress * 100) + '%';
+    handle.style.left = (progress * progressBarWidth) + 'px';
+  }
+
+  function scrub(e) {
+    if (!isScrubbing || !activePlayer || !activeProgressBarContainer) return;
+
+    const rect = activeProgressBarContainer.getBoundingClientRect();
+    let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : null);
+    if (clientX === null) return; // exit if no valid clientX
+
+    let x = clientX - rect.left;
+    x = Math.max(0, Math.min(x, rect.width)); // clamp x within bounds
+
+    const newTime = (x / rect.width) * activePlayer.duration;
+    
+    activePlayer.currentTime = newTime;
+    otherPlayer.currentTime = newTime;
+    
+    // manually update visual position during scrubbing
+    activeProgressBarFill.style.width = (x / rect.width * 100) + '%';
+    activeProgressHandle.style.left = x + 'px';
+    
+    const otherProgressBarFill = otherPlayer.parentNode.querySelector('.progress-bar-fill');
+    const otherProgressHandle = otherPlayer.parentNode.querySelector('.progress-handle');
+    otherProgressBarFill.style.width = (x / rect.width * 100) + '%';
+    otherProgressHandle.style.left = x + 'px';
+  }
+
+  function startScrubbing(e, player, partner, fill, handle, container) {
+    if (e.target !== handle && e.target !== fill && e.target !== container) return; // only start scrubbing if clicking on handle or bar
+
+    isScrubbing = true;
+    activePlayer = player;
+    otherPlayer = partner;
+    activeProgressBarFill = fill;
+    activeProgressHandle = handle;
+    activeProgressBarContainer = container;
+    
+    activePlayer.pause();
+    otherPlayer.pause();
+    
+    activeProgressHandle.style.cursor = 'grabbing'; // change cursor when dragging
+    scrub(e); // set initial position on mousedown
+  }
+
+  function endScrubbing() {
+    if (!isScrubbing) return;
+    isScrubbing = false;
+    if (activePlayer && otherPlayer) {
+      activePlayer.play();
+      otherPlayer.play();
+      activeProgressHandle.style.cursor = 'grab'; // reset cursor
+    }
+    activePlayer = null;
+    otherPlayer = null;
+    activeProgressBarFill = null;
+    activeProgressHandle = null;
+    activeProgressBarContainer = null;
+  }
+
+  animaticProgressBarContainer.addEventListener('mousedown', (e) => startScrubbing(e, animaticPlayer, finalPlayer, animaticProgressBar, animaticProgressHandle, animaticProgressBarContainer));
+  animaticProgressHandle.addEventListener('mousedown', (e) => startScrubbing(e, animaticPlayer, finalPlayer, animaticProgressBar, animaticProgressHandle, animaticProgressBarContainer));
+
+  finalProgressBarContainer.addEventListener('mousedown', (e) => startScrubbing(e, finalPlayer, animaticPlayer, finalProgressBar, finalProgressHandle, finalProgressBarContainer));
+  finalProgressHandle.addEventListener('mousedown', (e) => startScrubbing(e, finalPlayer, animaticPlayer, finalProgressBar, finalProgressHandle, finalProgressBarContainer));
+
+  document.addEventListener('mousemove', scrub);
+  document.addEventListener('mouseup', endScrubbing);
+  
+  // regular time updates i.e. only update if not scrubbing
+  animaticPlayer.addEventListener('timeupdate', () => {
+    if (!isScrubbing) {
+      updateProgressBar(animaticPlayer, animaticProgressBar, animaticProgressHandle);
+      updateProgressBar(finalPlayer, finalProgressBar, finalProgressHandle); // keep other bar in sync
+    }
+  });
+
+  finalPlayer.addEventListener('timeupdate', () => {
+    if (!isScrubbing) {
+      updateProgressBar(finalPlayer, finalProgressBar, finalProgressHandle);
+      updateProgressBar(animaticPlayer, animaticProgressBar, animaticProgressHandle);
+    }
+  });
+  
+  function resetVideos() {
+    animaticPlayer.currentTime = 0;
+    finalPlayer.currentTime = 0;
+    animaticPlayer.play();
+    finalPlayer.play();
+    updateProgressBar(animaticPlayer, animaticProgressBar, animaticProgressHandle);
+    updateProgressBar(finalPlayer, finalProgressBar, finalProgressHandle);
+  }
+  
+  animaticPlayer.addEventListener('ended', resetVideos);
+  finalPlayer.addEventListener('ended', resetVideos);
+  resetButton.addEventListener('click', resetVideos);
+</script>
