@@ -1,35 +1,96 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap');
-
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+  }
   body {
     background-color: white;
   }
 
-  .video-container {
+  @keyframes border-flash {
+    0% { border-color: #7e49b7; }
+    50% { border-color: white; }
+    100% { border-color: #7e49b7; }
+  }
+
+  .turntable-section {
     display: flex;
-    justify-content: space-around;
-    align-items: flex-start;
-    flex-wrap: nowrap;
-    gap: 20px;
-  }
-
-  .video-column {
-    flex: 1 1 30%;
-    max-width: 30%;
-    min-width: 300px;
-    display: inline;
-    position: relative;
-    cursor: pointer;
-    overflow: hidden;
-  }
-
-  .video-column:hover .enlarge-icon {
-    opacity: 1;
-  }
-
-  .video-column video {
+    flex-direction: column;
+    align-items: center;
     width: 100%;
-    height: auto;
+  }
+
+  .turntable-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 300px;
+    border-top: 2px dotted;
+    border-bottom: 2px dotted;
+    overflow: hidden;
+    background-color: #151514;
+    transition: all 0.5s ease-in-out;
+    animation: border-flash 10s infinite;
+  }
+
+  .turntable-column {
+    position: absolute;
+    height: 100%;
+    background-color: #151514;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .turntable-column:nth-child(1) {
+    left: 0;
+    width: 33.33%;
+  }
+
+  .turntable-column:nth-child(2) {
+    left: 33.33%;
+    width: 33.33%;
+  }
+
+  .turntable-column:nth-child(3) {
+    left: 66.66%;
+    width: 33.33%;
+  }
+
+  .turntable-column.enlarged {
+    width: 100%;
+    left: 0;
+    transform: none;
+    opacity: 1;
+    z-index: 10;
+  }
+
+  .turntable-column.faded {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .turntable-column video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    cursor: pointer;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .turntable-column.enlarged video {
+    object-fit: cover;
+    object-position: 50% 100%;
+  }
+
+  .video-label-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 20px;
   }
 
   .video-label {
@@ -37,86 +98,68 @@
     font-size: 12px;
     color: black;
     text-align: center;
-    margin-top: 10px;
     text-transform: uppercase;
+    flex: 1 1 33.33%;
+    max-width: 33.33%;
+    min-width: 0;
+    margin-top: 10px;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .video-label.faded {
+    opacity: 0;
+    pointer-events: none;
   }
 
   .enlarge-icon {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 3em;
+    bottom: 5px;
+    right: 5px;
+    font-size: 2em;
     color: white;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 50%;
-    padding: 10px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    cursor: pointer;
-    z-index: 10;
-  }
-
-  .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(10px);
-    display: none;
+    width: 30px;
+    height: 30px;
+    display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease-in-out;
   }
 
-  .modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 80%;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    text-align: center;
-  }
-
-  .modal-content video {
-    width: 100%;
-    height: auto;
-    max-width: 800px;
-  }
-
-  .modal-description {
-    font-family: 'Oswald', sans-serif;
-    margin-top: 20px;
-    font-size: 1em;
-    color: #333;
-    line-height: 1.5;
+  .turntable-column.enlarged .enlarge-icon {
+    transform: scale(1.5);
   }
 </style>
 
-<div class="video-container">
-  <div class="video-column">
-    <video id="gecko" autoplay muted loop playsinline></video>
-    <div class="video-label">Leaf-tail gecko</div>
-    <div class="enlarge-icon">🔍</div>
+<div class="turntable-section">
+  <div class="turntable-container">
+    <div class="turntable-column">
+      <div class="video-wrapper">
+        <video id="gecko" autoplay muted loop playsinline></video>
+        <div class="enlarge-icon">+</div>
+      </div>
+    </div>
+    <div class="turntable-column">
+      <div class="video-wrapper">
+        <video id="skink" autoplay muted loop playsinline></video>
+        <div class="enlarge-icon">+</div>
+      </div>
+    </div>
+    <div class="turntable-column">
+      <div class="video-wrapper">
+        <video id="lizard" autoplay muted loop playsinline></video>
+        <div class="enlarge-icon">+</div>
+      </div>
+    </div>
   </div>
-  <div class="video-column">
-    <video id="skink" autoplay muted loop playsinline></video>
-    <div class="video-label">Sun-skink</div>
-    <div class="enlarge-icon">🔍</div>
-  </div>
-  <div class="video-column">
-    <video id="lizard" autoplay muted loop playsinline></video>
-    <div class="video-label">Horned lizard</div>
-    <div class="enlarge-icon">🔍</div>
-  </div>
-</div>
 
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal-content">
-    <video id="modalVideo" autoplay muted loop playsinline></video>
-    <div class="modal-description" id="modalDescription"></div>
+  <div class="video-label-container">
+    <div class="video-label">Leaf-tail gecko</div>
+    <div class="video-label">Sun-skink</div>
+    <div class="video-label">Horned lizard</div>
   </div>
 </div>
 
@@ -124,43 +167,79 @@
   const gecko = document.getElementById('gecko');
   const skink = document.getElementById('skink');
   const lizard = document.getElementById('lizard');
-  const modalOverlay = document.getElementById('modalOverlay');
-  const modalVideo = document.getElementById('modalVideo');
-  const modalDescription = document.getElementById('modalDescription');
-  const enlargeIcons = document.querySelectorAll('.enlarge-icon');
-
+  const videos = [gecko, skink, lizard];
+  
   gecko.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/GeckoTurntable.mp4";
   skink.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/SkinkTurntable.mp4";
   lizard.src = "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/LizardTurntableNEW.mp4";
-  
-  const descriptions = {
-    gecko: "The leaf-tail gecko faces threats from extensive habitat destruction due to logging, land clearing for farming, and mining. Poaching for the illegal pet trade also poses a significant risk to this species.",
-    skink: "Sun-skinks are vulnerable to habitat loss from land clearing and urban development, as well as the introduction of invasive species such as cats and foxes.",
-    lizard: "Horned lizards are affected by urbanisation, as this fragments their natural habitat, creating isolated populations separated by roads and buildings."
-  };
 
-  function enlargeVideo(videoId) {
-    const originalVideo = document.getElementById(videoId);
-    gecko.pause();
-    skink.pause();
-    lizard.pause();
+  const columns = document.querySelectorAll('.turntable-column');
+  const labels = document.querySelectorAll('.video-label');
+  const icons = document.querySelectorAll('.enlarge-icon');
+  let enlargedState = false;
+  let timeoutId = null;
+  let syncIntervalId = null;
 
-    modalVideo.src = originalVideo.src;
-    modalDescription.textContent = descriptions[videoId];
-    modalOverlay.style.display = 'flex';
+  function syncVideos() {
+    const masterVideo = videos[0];
+    videos.forEach(video => {
+      if (video !== masterVideo) {
+        if (Math.abs(video.currentTime - masterVideo.currentTime) > 0.1) {
+          video.currentTime = masterVideo.currentTime;
+        }
+      }
+    });
   }
 
-  enlargeIcons[0].addEventListener('click', () => enlargeVideo('gecko'));
-  enlargeIcons[1].addEventListener('click', () => enlargeVideo('skink'));
-  enlargeIcons[2].addEventListener('click', () => enlargeVideo('lizard'));
+  // auto-revert function
+  function autoRevert() {
+    columns.forEach(c => c.classList.remove('enlarged', 'faded'));
+    labels.forEach(l => l.classList.remove('faded'));
+    icons.forEach(i => i.textContent = '+');
+    enlargedState = false;
+    // restart syncing when revert
+    syncIntervalId = setInterval(syncVideos, 100);
+  }
 
-  modalOverlay.addEventListener('click', (event) => {
-    if (event.target === modalOverlay) {
-      modalOverlay.style.display = 'none';
+  // start syncing when videos are ready
+  let loadedCount = 0;
+  videos.forEach(video => {
+    video.addEventListener('canplaythrough', () => {
+      loadedCount++;
+      if (loadedCount === videos.length) {
+        syncIntervalId = setInterval(syncVideos, 100);
+      }
+    });
+  });
 
-      gecko.play();
-      skink.play();
-      lizard.play();
-    }
+  columns.forEach((column, index) => {
+    column.addEventListener('click', (event) => {
+      const isEnlargeElement = event.target.closest('.video-wrapper');
+
+      if (enlargedState) {
+        // clear timeout and revert on click
+        clearTimeout(timeoutId);
+        autoRevert();
+        
+      } else if (isEnlargeElement) {
+        // clear sync interval
+        clearInterval(syncIntervalId);
+        
+        // enlarge video
+        columns.forEach((c, i) => {
+          if (c === column) {
+            c.classList.add('enlarged');
+            labels[i].classList.remove('faded');
+            icons[i].textContent = '-';
+          } else {
+            c.classList.add('faded');
+            labels[i].classList.add('faded');
+          }
+        });
+        enlargedState = true;
+        
+        timeoutId = setTimeout(autoRevert, 30000);
+      }
+    });
   });
 </script>
