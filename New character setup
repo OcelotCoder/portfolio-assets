@@ -1,0 +1,267 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap');
+
+  body {
+    background-color: white;
+  }
+
+  @keyframes border-flash {
+    0% { border-color: #7e49b7; }
+    50% { border-color: white; }
+    100% { border-color: #7e49b7; }
+  }
+
+  .turntable-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .turntable-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 300px;
+    border-top: 2px dotted;
+    border-bottom: 2px dotted;
+    overflow: hidden;
+    background-color: #151514;
+    transition: all 0.5s ease-in-out;
+    animation: border-flash 10s infinite;
+  }
+
+  .turntable-column {
+    position: absolute;
+    height: 100%;
+    background-color: #151514;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .turntable-column:nth-child(1) {
+    left: 0;
+    width: 33.33%;
+  }
+
+  .turntable-column:nth-child(2) {
+    left: 33.33%;
+    width: 33.33%;
+  }
+
+  .turntable-column:nth-child(3) {
+    left: 66.66%;
+    width: 33.33%;
+  }
+
+  .turntable-column.enlarged {
+    width: 100%;
+    left: 0;
+    transform: none;
+    opacity: 1;
+    z-index: 10;
+  }
+
+  .turntable-column.faded {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .turntable-column img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    cursor: grab;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .turntable-column.enlarged img {
+    object-fit: cover;
+    object-position: 50% 100%;
+  }
+
+  .video-label-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 20px;
+  }
+
+  .video-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px;
+    color: black;
+    text-align: center;
+    text-transform: uppercase;
+    flex: 1 1 33.33%;
+    max-width: 33.33%;
+    min-width: 0;
+    margin-top: 10px;
+    transition: all 0.5s ease-in-out;
+  }
+
+  .video-label.faded {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .enlarge-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 2em;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease-in-out;
+  }
+
+  .turntable-column.enlarged .enlarge-icon {
+    transform: scale(1.5);
+  }
+</style>
+
+<div class="turntable-section">
+  <div class="turntable-container">
+    <div class="turntable-column">
+      <div class="video-wrapper">
+        <img id="gecko" src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko1.png">
+        <div class="enlarge-icon">+</div>
+      </div>
+    </div>
+    <div class="turntable-column">
+      <div class="video-wrapper">
+        <img id="skink" src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink1.png">
+        <div class="enlarge-icon">+</div>
+      </div>
+    </div>
+    <div class="turntable-column">
+      <div class="video-wrapper">
+        <img id="lizard" src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard1.png">
+        <div class="enlarge-icon">+</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="video-label-container">
+    <div class="video-label">Leaf-tail gecko</div>
+    <div class="video-label">Sun-skink</div>
+    <div class="video-label">Horned lizard</div>
+  </div>
+</div>
+
+<script>
+  const gecko = document.getElementById('gecko');
+  const skink = document.getElementById('skink');
+  const lizard = document.getElementById('lizard');
+  
+  const geckoImages = [
+    "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko1.png",
+    "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko2.png",
+    "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko3.png",
+    "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko4.png"
+  ];
+  const skinkImages = [
+    "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink1.png",
+    "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink2.png",
+    "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink3.png",
+    "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink4.png"
+  ];
+  const lizardImages = [
+    "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard1.png",
+    "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard2.png",
+    "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard3.png",
+    "https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard4.png"
+  ];
+  
+  const columns = document.querySelectorAll('.turntable-column');
+  const labels = document.querySelectorAll('.video-label');
+  const icons = document.querySelectorAll('.enlarge-icon');
+  let enlargedState = false;
+  let timeoutId = null;
+
+  let isDragging = false;
+  let startX = 0;
+  let currentImageIndex = [0, 0, 0];
+  const images = [geckoImages, skinkImages, lizardImages];
+  const imagesElements = [gecko, skink, lizard];
+  const totalFrames = 4;
+
+  function updateImage(index, newIndex) {
+    if (newIndex >= totalFrames) {
+      newIndex = 0;
+    } else if (newIndex < 0) {
+      newIndex = totalFrames - 1;
+    }
+    currentImageIndex[index] = newIndex;
+    imagesElements[index].src = images[index][newIndex];
+  }
+
+  function startDrag(e, index) {
+    isDragging = true;
+    startX = e.clientX || e.touches[0].clientX;
+    document.body.style.cursor = 'grabbing';
+  }
+
+  function doDrag(e, index) {
+    if (!isDragging) return;
+    const clientX = e.clientX || e.touches[0].clientX;
+    const delta = clientX - startX;
+    
+    const newIndex = currentImageIndex[index] + Math.floor(delta / 50);
+
+    for (let i = 0; i < imagesElements.length; i++) {
+        updateImage(i, newIndex);
+    }
+  }
+
+  function endDrag() {
+    isDragging = false;
+    document.body.style.cursor = 'grab';
+  }
+
+  columns.forEach((column, index) => {
+    column.addEventListener('click', (event) => {
+      const isEnlargeElement = event.target.closest('.enlarge-icon') || (event.target.tagName === 'IMG' && !isDragging);
+
+      if (enlargedState) {
+        columns.forEach(c => {
+          c.classList.remove('enlarged', 'faded');
+        });
+        labels.forEach(l => l.classList.remove('faded'));
+        icons.forEach(i => i.textContent = '+');
+        enlargedState = false;
+        
+      } else if (isEnlargeElement) {
+        columns.forEach((c, i) => {
+          if (c === column) {
+            c.classList.add('enlarged');
+            labels[i].classList.remove('faded');
+            icons[i].textContent = '-';
+          } else {
+            c.classList.add('faded');
+            labels[i].classList.add('faded');
+          }
+        });
+        enlargedState = true;
+      }
+    });
+
+    column.addEventListener('mousedown', (e) => startDrag(e, index));
+    column.addEventListener('mousemove', (e) => doDrag(e, index));
+    column.addEventListener('mouseup', endDrag);
+    column.addEventListener('mouseleave', endDrag);
+
+    column.addEventListener('touchstart', (e) => startDrag(e, index));
+    column.addEventListener('touchmove', (e) => doDrag(e, index));
+    column.addEventListener('touchend', endDrag);
+  });
+</script>
