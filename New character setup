@@ -36,11 +36,26 @@
     padding-bottom: 20px;
   }
 
-  .turntable-column img {
+  .turntable-images {
+    position: relative;
     width: 100%;
     height: calc(100% - 30px);
+    overflow: hidden;
+  }
+
+  .turntable-images img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-    transition: opacity 0.2s ease-in-out;
+    opacity: 0;
+    transition: opacity 0.4s ease-in-out;
+  }
+
+  .turntable-images img.active {
+    opacity: 1;
   }
 
   .content-wrapper {
@@ -92,7 +107,7 @@
   }
 
   .thumbnail-container img.highlight {
-    border-color: #555;
+    border-color: #7e49b7;
   }
 
   .slider-bar-container {
@@ -117,7 +132,7 @@
     transform: translate(-50%, -50%);
     width: 14px;
     height: 14px;
-    background-color: #7e49b7;
+    background-color: #7e49b7; /* Changed to purple */
     border-radius: 50%;
     cursor: grab;
     z-index: 10;
@@ -127,21 +142,36 @@
 <div class="turntable-section">
   <div class="turntable-container">
     <div class="turntable-column">
-      <img id="gecko" src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko1.png" alt="Leaf-tail gecko turntable">
+      <div class="turntable-images" id="gecko-images">
+        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko1.png" alt="Gecko 1">
+        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko2.png" alt="Gecko 2">
+        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko3.png" alt="Gecko 3">
+        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko4.png" alt="Gecko 4">
+      </div>
       <div class="slider-bar-container" id="gecko-slider-bar">
         <div class="slider-bar-fill" id="gecko-slider-fill"></div>
         <div class="slider-handle" id="gecko-slider-handle"></div>
       </div>
     </div>
     <div class="turntable-column">
-      <img id="skink" src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink1NEW.png" alt="Sun-skink turntable">
+      <div class="turntable-images" id="skink-images">
+        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink1NEW.png" alt="Skink 1">
+        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink2.png" alt="Skink 2">
+        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink3.png" alt="Skink 3">
+        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink4.png" alt="Skink 4">
+      </div>
       <div class="slider-bar-container" id="skink-slider-bar">
         <div class="slider-bar-fill" id="skink-slider-fill"></div>
         <div class="slider-handle" id="skink-slider-handle"></div>
       </div>
     </div>
     <div class="turntable-column">
-      <img id="lizard" src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard1.png" alt="Horned lizard turntable">
+      <div class="turntable-images" id="lizard-images">
+        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard1.png" alt="Lizard 1">
+        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard2.png" alt="Lizard 2">
+        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard3.png" alt="Lizard 3">
+        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard4.png" alt="Lizard 4">
+      </div>
       <div class="slider-bar-container" id="lizard-slider-bar">
         <div class="slider-bar-fill" id="lizard-slider-fill"></div>
         <div class="slider-handle" id="lizard-slider-handle"></div>
@@ -183,56 +213,32 @@
 </div>
 
 <script>
-  const geckoMain = document.getElementById('gecko');
-  const skinkMain = document.getElementById('skink');
-  const lizardMain = document.getElementById('lizard');
-
-  const geckoThumbnails = document.getElementById('gecko-thumbnails');
-  const skinkThumbnails = document.getElementById('skink-thumbnails');
-  const lizardThumbnails = document.getElementById('lizard-thumbnails');
-
-  const geckoSliderBar = document.getElementById('gecko-slider-bar');
-  const skinkSliderBar = document.getElementById('skink-slider-bar');
-  const lizardSliderBar = document.getElementById('lizard-slider-bar');
-
-  const geckoSliderHandle = document.getElementById('gecko-slider-handle');
-  const skinkSliderHandle = document.getElementById('skink-slider-handle');
-  const lizardSliderHandle = document.getElementById('lizard-slider-handle');
-
-  const geckoSliderFill = document.getElementById('gecko-slider-fill');
-  const skinkSliderFill = document.getElementById('skink-slider-fill');
-  const lizardSliderFill = document.getElementById('lizard-slider-fill');
-
   const imagesSets = [
-    { main: geckoMain, thumbnails: geckoThumbnails, slider: geckoSliderBar, handle: geckoSliderHandle, fill: geckoSliderFill, totalImages: 4 },
-    { main: skinkMain, thumbnails: skinkThumbnails, slider: skinkSliderBar, handle: skinkSliderHandle, fill: skinkSliderFill, totalImages: 4 },
-    { main: lizardMain, thumbnails: lizardThumbnails, slider: lizardSliderBar, handle: lizardSliderHandle, fill: lizardSliderFill, totalImages: 4 }
+    { images: document.getElementById('gecko-images').querySelectorAll('img'), thumbnails: document.getElementById('gecko-thumbnails'), slider: document.getElementById('gecko-slider-bar'), handle: document.getElementById('gecko-slider-handle'), fill: document.getElementById('gecko-slider-fill'), totalImages: 4 },
+    { images: document.getElementById('skink-images').querySelectorAll('img'), thumbnails: document.getElementById('skink-thumbnails'), slider: document.getElementById('skink-slider-bar'), handle: document.getElementById('skink-slider-handle'), fill: document.getElementById('skink-slider-fill'), totalImages: 4 },
+    { images: document.getElementById('lizard-images').querySelectorAll('img'), thumbnails: document.getElementById('lizard-thumbnails'), slider: document.getElementById('lizard-slider-bar'), handle: document.getElementById('lizard-slider-handle'), fill: document.getElementById('lizard-slider-fill'), totalImages: 4 }
   ];
 
   let isDraggingSlider = false;
   let activeSliderSet = null;
+  let currentImageIndex = [0, 0, 0];
 
   function updateState(setIndex, progress) {
-    const { main, thumbnails, slider, handle, fill, totalImages } = imagesSets[setIndex];
-    const imageElements = thumbnails.querySelectorAll('img');
+    const { images, thumbnails, slider, handle, fill, totalImages } = imagesSets[setIndex];
+    const thumbnailElements = thumbnails.querySelectorAll('img');
 
-    let newIndex = Math.floor(progress * (totalImages));
+    let newIndex = Math.floor(progress * totalImages);
     if (newIndex >= totalImages) {
         newIndex = totalImages - 1;
     }
     
-    // check if image needs to be changed
-    if (main.src !== imageElements[newIndex].src) {
-        // set opacity 0 for quick fade-out
-        main.style.opacity = 0;
-        setTimeout(() => {
-            main.src = imageElements[newIndex].src;
-            // set opacity 1 for fade-in
-            main.style.opacity = 1;
-        }, 100); // wait 100ms for fade-out to complete
+    if (newIndex !== currentImageIndex[setIndex]) {
+        images[currentImageIndex[setIndex]].classList.remove('active');
+        images[newIndex].classList.add('active');
+        currentImageIndex[setIndex] = newIndex;
     }
 
-    imageElements.forEach((img, i) => {
+    thumbnailElements.forEach((img, i) => {
       if (i === newIndex) {
         img.classList.add('highlight');
       } else {
@@ -303,6 +309,7 @@
   });
 
   imagesSets.forEach((set, setIndex) => {
+    set.images[0].classList.add('active');
     updateState(setIndex, 0);
   });
 </script>
