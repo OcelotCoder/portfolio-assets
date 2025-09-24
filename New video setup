@@ -1,0 +1,203 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap');
+
+  body {
+    background-color: white;
+  }
+
+  .video-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .video-labels {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .video-player-wrapper {
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .combined-video-player {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .play-pause-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    z-index: 20;
+  }
+
+  .play-pause-button {
+    font-family: sans-serif;
+    font-size: 4em;
+    color: white;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+  }
+
+  .hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .progress-bar-container {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.5);
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    width: 0;
+    background-color: #7e49b7;
+  }
+
+  .progress-handle {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    background-color: #7e49b7;
+    border-radius: 50%;
+    cursor: grab;
+    z-index: 10;
+  }
+
+  .video-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px;
+    color: black;
+    text-align: center;
+    text-transform: uppercase;
+    flex: 1;
+  }
+</style>
+
+<div class="video-container">
+  <div class="video-player-wrapper">
+    <video id="combinedPlayer" muted playsinline class="combined-video-player"></video>
+    <div class="play-pause-overlay" id="videoOverlay">
+      <span class="play-pause-button" id="playButton">▶</span>
+    </div>
+  </div>
+  <div class="progress-bar-container" id="progressBarContainer">
+    <div class="progress-bar-fill" id="progressBar"></div>
+    <div class="progress-handle" id="progressHandle"></div>
+  </div>
+  <div class="video-labels">
+    <div class="video-label">Animatic (sketched prototype)</div>
+    <div class="video-label">Final animation (ZBrush, Substance Painter, Blender)</div>
+  </div>
+</div>
+
+<script>
+  const combinedPlayer = document.getElementById('combinedPlayer');
+  const progressBar = document.getElementById('progressBar');
+  const progressBarContainer = document.getElementById('progressBarContainer');
+  const progressHandle = document.getElementById('progressHandle');
+  const videoOverlay = document.getElementById('videoOverlay');
+  const playButton = document.getElementById('playButton');
+
+  combinedPlayer.src = "https://ik.imagekit.io/ocelot1/combined10001-4998.mp4?updatedAt=1758623536369";
+
+  let isScrubbing = false;
+  let isPlaying = false;
+
+  function togglePlayPause() {
+    if (isPlaying) {
+      combinedPlayer.pause();
+      playButton.textContent = '▶';
+      videoOverlay.classList.remove('hidden');
+    } else {
+      combinedPlayer.play();
+      playButton.textContent = '❚❚';
+      videoOverlay.classList.add('hidden');
+    }
+    isPlaying = !isPlaying;
+  }
+
+  videoOverlay.addEventListener('click', togglePlayPause);
+  
+  combinedPlayer.addEventListener('timeupdate', () => {
+    if (!isScrubbing) {
+      const progress = combinedPlayer.currentTime / combinedPlayer.duration;
+      const progressBarWidth = progressBarContainer.offsetWidth;
+      progressBar.style.width = (progress * 100) + '%';
+      progressHandle.style.left = (progress * progressBarWidth) + 'px';
+    }
+  });
+
+  function scrub(e) {
+    if (!isScrubbing) return;
+    e.preventDefault();
+
+    const rect = progressBarContainer.getBoundingClientRect();
+    let clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : null);
+    if (clientX === null) return;
+
+    let x = clientX - rect.left;
+    x = Math.max(0, Math.min(x, rect.width));
+
+    const newTime = (x / rect.width) * combinedPlayer.duration;
+    combinedPlayer.currentTime = newTime;
+    
+    progressBar.style.width = (x / rect.width * 100) + '%';
+    progressHandle.style.left = x + 'px';
+  }
+
+  function startScrubbing(e) {
+    isScrubbing = true;
+    combinedPlayer.pause();
+    progressHandle.style.cursor = 'grabbing';
+    scrub(e);
+  }
+
+  function endScrubbing() {
+    if (!isScrubbing) return;
+    isScrubbing = false;
+    combinedPlayer.play();
+    progressHandle.style.cursor = 'grab';
+  }
+
+  progressBarContainer.addEventListener('mousedown', startScrubbing);
+  progressHandle.addEventListener('mousedown', startScrubbing);
+
+  document.addEventListener('mousemove', scrub);
+  document.addEventListener('mouseup', endScrubbing);
+  document.addEventListener('touchmove', scrub);
+  document.addEventListener('touchend', endScrubbing);
+  
+  combinedPlayer.addEventListener('ended', () => {
+    combinedPlayer.currentTime = 0;
+    combinedPlayer.pause();
+    isPlaying = false;
+    playButton.textContent = '▶';
+    videoOverlay.classList.remove('hidden');
+  });
+</script>
