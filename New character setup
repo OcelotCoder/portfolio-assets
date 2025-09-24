@@ -10,6 +10,7 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+    margin-bottom: 20px;
   }
 
   .turntable-container {
@@ -18,9 +19,10 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 300px;
+    height: auto;
     background-color: white;
     transition: all 0.5s ease-in-out;
+    margin-top: 0;
   }
 
   .turntable-column {
@@ -30,17 +32,35 @@
     transition: all 0.5s ease-in-out;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
     width: 33.33%;
-    padding-bottom: 20px;
+    padding: 0 5px; 
+  }
+  
+  .video-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px;
+    color: black;
+    text-align: center;
+    text-transform: uppercase;
+    flex: 1 1 33.33%;
+    max-width: 33.33%;
+    min-width: 0;
+    margin-bottom: -70px;
+  }
+  
+  .turntable-images-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
   }
 
   .turntable-images {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: calc(100% - 30px);
-    overflow: hidden;
+    height: 100%;
   }
 
   .turntable-images img {
@@ -73,24 +93,12 @@
     gap: 20px;
     margin-top: 20px;
   }
-  
-  .video-label {
-    font-family: 'Oswald', sans-serif;
-    font-size: 12px;
-    color: black;
-    text-align: center;
-    text-transform: uppercase;
-    flex: 1 1 33.33%;
-    max-width: 33.33%;
-    min-width: 0;
-    margin-top: 10px;
-  }
 
   .thumbnail-container {
     display: flex;
     justify-content: center;
     gap: 5px;
-    margin-top: 10px;
+    margin-top: 2px;
   }
 
   .thumbnail-container img {
@@ -116,14 +124,13 @@
     height: 4px;
     background-color: #e0e0e0;
     cursor: grab;
-    margin-top: auto;
-    margin-bottom: 5px;
+    margin-top: -70px;
   }
 
   .slider-bar-fill {
     height: 100%;
     width: 0;
-    background-color: #555;
+    background-color: #7e49b7;
   }
 
   .slider-handle {
@@ -132,7 +139,7 @@
     transform: translate(-50%, -50%);
     width: 14px;
     height: 14px;
-    background-color: #7e49b7; /* Changed to purple */
+    background-color: #7e49b7;
     border-radius: 50%;
     cursor: grab;
     z-index: 10;
@@ -142,46 +149,19 @@
 <div class="turntable-section">
   <div class="turntable-container">
     <div class="turntable-column">
-      <div class="turntable-images" id="gecko-images">
-        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko1.png" alt="Gecko 1">
-        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko2.png" alt="Gecko 2">
-        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko3.png" alt="Gecko 3">
-        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko4.png" alt="Gecko 4">
+      <div class="video-label">Leaf-tail gecko</div>
+      <div class="turntable-images-wrapper">
+        <div class="turntable-images" id="gecko-images">
+          <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko1.png" alt="Gecko 1">
+          <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko2.png" alt="Gecko 2">
+          <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko3.png" alt="Gecko 3">
+          <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko4.png" alt="Gecko 4">
+        </div>
       </div>
       <div class="slider-bar-container" id="gecko-slider-bar">
         <div class="slider-bar-fill" id="gecko-slider-fill"></div>
         <div class="slider-handle" id="gecko-slider-handle"></div>
       </div>
-    </div>
-    <div class="turntable-column">
-      <div class="turntable-images" id="skink-images">
-        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink1NEW.png" alt="Skink 1">
-        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink2.png" alt="Skink 2">
-        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink3.png" alt="Skink 3">
-        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink4.png" alt="Skink 4">
-      </div>
-      <div class="slider-bar-container" id="skink-slider-bar">
-        <div class="slider-bar-fill" id="skink-slider-fill"></div>
-        <div class="slider-handle" id="skink-slider-handle"></div>
-      </div>
-    </div>
-    <div class="turntable-column">
-      <div class="turntable-images" id="lizard-images">
-        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard1.png" alt="Lizard 1">
-        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard2.png" alt="Lizard 2">
-        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard3.png" alt="Lizard 3">
-        <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard4.png" alt="Lizard 4">
-      </div>
-      <div class="slider-bar-container" id="lizard-slider-bar">
-        <div class="slider-bar-fill" id="lizard-slider-fill"></div>
-        <div class="slider-handle" id="lizard-slider-handle"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class="turntable-wrapper">
-    <div class="content-wrapper">
-      <div class="video-label">Leaf-tail gecko</div>
       <div class="thumbnail-container" id="gecko-thumbnails">
         <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko1.png" alt="Gecko Thumbnail 1" class="highlight">
         <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko2.png" alt="Gecko Thumbnail 2">
@@ -189,9 +169,20 @@
         <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Gecko4.png" alt="Gecko Thumbnail 4">
       </div>
     </div>
-    
-    <div class="content-wrapper">
+    <div class="turntable-column">
       <div class="video-label">Sun-skink</div>
+      <div class="turntable-images-wrapper">
+        <div class="turntable-images" id="skink-images">
+          <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink1NEW.png" alt="Skink 1">
+          <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink2.png" alt="Skink 2">
+          <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink3.png" alt="Skink 3">
+          <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink4.png" alt="Skink 4">
+        </div>
+      </div>
+      <div class="slider-bar-container" id="skink-slider-bar">
+        <div class="slider-bar-fill" id="skink-slider-fill"></div>
+        <div class="slider-handle" id="skink-slider-handle"></div>
+      </div>
       <div class="thumbnail-container" id="skink-thumbnails">
         <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink1NEW.png" alt="Skink Thumbnail 1" class="highlight">
         <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink2.png" alt="Skink Thumbnail 2">
@@ -199,9 +190,20 @@
         <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Skink4.png" alt="Skink Thumbnail 4">
       </div>
     </div>
-
-    <div class="content-wrapper">
+    <div class="turntable-column">
       <div class="video-label">Horned lizard</div>
+      <div class="turntable-images-wrapper">
+        <div class="turntable-images" id="lizard-images">
+          <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard1.png" alt="Lizard 1">
+          <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard2.png" alt="Lizard 2">
+          <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard3.png" alt="Lizard 3">
+          <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard4.png" alt="Lizard 4">
+        </div>
+      </div>
+      <div class="slider-bar-container" id="lizard-slider-bar">
+        <div class="slider-bar-fill" id="lizard-slider-fill"></div>
+        <div class="slider-handle" id="lizard-slider-handle"></div>
+      </div>
       <div class="thumbnail-container" id="lizard-thumbnails">
         <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard1.png" alt="Lizard Thumbnail 1" class="highlight">
         <img src="https://raw.githubusercontent.com/OcelotCoder/portfolio-assets/main/Lizard2.png" alt="Lizard Thumbnail 2">
@@ -298,15 +300,6 @@
   document.addEventListener('mouseup', endSliderDrag);
   document.addEventListener('touchmove', handleSliderDrag);
   document.addEventListener('touchend', endSliderDrag);
-
-  imagesSets.forEach((set, setIndex) => {
-    set.slider.addEventListener('click', (e) => {
-      const rect = set.slider.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const progress = x / rect.width;
-      updateState(setIndex, progress);
-    });
-  });
 
   imagesSets.forEach((set, setIndex) => {
     set.images[0].classList.add('active');
